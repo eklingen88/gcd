@@ -24,84 +24,48 @@ new_source_dir=0
 # Load config
 source load-config.sh
 
-# TODO Validate the config file
-# Check if source file exists
-out_notice "Checking if source directory exists now ..."
-
-if [ ! -d "${source_dir}" ]; then
-    # Source directory does not exist, so let's try to create it
-    out_notice "Source directory does not exist.  Creating it now ..."
-    mkdir -p "${source_dir}"
-
-    # Set this flag for later use
-    new_source_dir=1
-else
-    out_ok "Source directory found."
-fi
-
 # Place the user credentials in the git URL
 git_full_url=`echo "${git_url}" | sed -r 's/(https*:\/\/)(.*)/\1'$git_username':'$git_password'@\2/'`
 
 # Put git_remote and git_branch together for git_ref, eg. origin + / + remote
 git_ref="${git_remote}/${git_branch}"
 
+# Check if source exists and ensure that .git does not
+out_notice "Checking for source files and git repository ..."
+
+if [ ! -d "${source_dir}" ]; then out_error "Source directory does not exist." 1; fi
+if [ -d "${source_dir}/.git" ]; then out_error "Git repository already initialized." 1; fi
+
+out_ok "File structure verified."
+
 # Get into the source directory to check for git
 cd "${source_dir}"
 
-# Check if git is set up already
-if [ ! -d "${source_dir}/.git" ]; then
-    out_notice "Local git repository does not exist.  Initializing now ..."
+# Git is not initialized so we will set it up now
+out_notice "Local git repository does not exist.  Initializing ..."
 
-    # Git is not initialized so we will set it up now
-    git init
-    git remote add origin "${git_full_url}"
+git init
+git config --local user.name "${git_username}"
+git config --local user.email "${git_email}"
+git remote add origin "${git_full_url}"
+git checkout -b "${git_branch}"
+git add --all
+git commit -m "Initial commit."
 
-    out_ok "Git repository initialized."
+out_ok "Git repository initialized."
+
+# Verify branch does not exist in remote
+out_notice "Checking if ${git_ref} exists ..."
+
+if [[ `git ls-remote --heads ${git_remote} ${git_branch}` ]]; then
+    out_error "Ref ${git_ref} has been found in git repository." 1
 else
-    out_notice "Local git respository found.  Verifying credentials now ..."
-
-    # Verify config and git repository match
-    git_current_url=`git ls-remote --get-url`
-    if [[ $git_current_url == *$git_full_url* ]]; then
-        out_ok "Git credentials are a match."
-    else
-        out_error "Git credentials do not match config." 1
-    fi
+    out_ok "Ref ${git_ref} has not been found in the git respository."
 fi
 
-# Verify that the git_ref exists (should be a branch, COULD be a tag)
-out_notice "Checking if ${git_ref} exists in git repository now ... "
+# Now push the whole thing
+out_notice "Pushing ${git_branch} to git repository on ${git_remote} ..."
 
-git_remote_refs=`git branch -r --list`
+git push "${git_remote}" "${git_branch}"
 
-if [ -z $git_remote_refs ]; then
-    # Empty remote repo found, looks like we're definitely going to be pushing this up
-    out_notice "Remote git repository is empty.  Pushing source now ..."
-
-    # Check if the branch exists locally
-    if [ `git branch --list ${git_branch}` ]; then
-        # Branch does not exist
-        out_notice
-
-        # Create it
-        git add --all
-        git commit -m "Initial commit."
-    fi
-fi
-
-exit
-
-if [ `git branch -r --list ${git_ref}` ]; then
-    out_ok "Ref ${git_ref} has been found in git repository."
-else
-    out_error "Ref ${git_ref} could not be located in git respository." 1
-fi
-
-# TODO set up cron
-
-
-
-exit
-
-git fetch --all
-git checkout --force "${git_ref}"
+out_ok "Git repository pushed."
