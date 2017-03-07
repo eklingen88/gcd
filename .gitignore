@@ -1,0 +1,8 @@
+# Ignore project files
+.idea
+
+# Ignore experiments
+/x-*
+/x/*
+
+# General
