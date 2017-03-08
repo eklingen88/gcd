@@ -9,6 +9,7 @@ shopt -s extglob
 
 # Sanitize the config in case it came from a Windows environment
 tr -d '\r' < $CONFIG_PATH > $CONFIG_PATH.unix
+echo >> $CONFIG_PATH.unix
 
 # Read
 while IFS='= ' read lhs rhs
@@ -19,6 +20,7 @@ do
         rhs="${rhs%\"*}"     # Del opening string quotes
         rhs="${rhs#\"*}"     # Del closing string quotes
         declare $lhs="$rhs"
+        echo "${lhs} = ${rhs}"
     fi
 done < $CONFIG_PATH.unix
 
