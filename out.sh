@@ -6,7 +6,7 @@ function out_error {
 
     if [ ! -z $2 ] && [ $2 -ne 0 ]; then
         echo -e "\e[31m!!! EXITING NOW !!!\e[39m"
-        exit
+        exit 1
     fi
 }
 
