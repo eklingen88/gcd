@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
 
+# Get in the local directory
+current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "${current_dir}"
+
 # Load config
 source load-config.sh
 
-echo $git_username
-exit
-
-SOURCE_DIR=/var/www/html
-TARGET_REF=origin/master
-LOG_FILE=~/log/code-deploy.log
-
-cd "${SOURCE_DIR}"
-echo [`date`]                           >> "${LOG_FILE}" 2>&1
-git fetch --all                         >> "${LOG_FILE}" 2>&1
-git checkout --force "${TARGET_REF}"    >> "${LOG_FILE}" 2>&1
+# Pull everything down
+cd "${source_dir}"
+echo [`date`]                                       >> "${log_path}" 2>&1
+git fetch "${git_remote}" "${git_branch}"           >> "${log_path}" 2>&1
+git checkout --force "${git_remote}/${git_branch}"  >> "${log_path}" 2>&1
