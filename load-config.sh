@@ -20,7 +20,6 @@ do
         rhs="${rhs%\"*}"     # Del opening string quotes
         rhs="${rhs#\"*}"     # Del closing string quotes
         declare $lhs="$rhs"
-        echo "${lhs} = ${rhs}"
     fi
 done < $CONFIG_PATH.unix
 
