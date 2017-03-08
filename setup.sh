@@ -1,13 +1,24 @@
 #!/usr/bin/env bash
 
-# Initialize variables
-new_source_dir=0
+# Get in the local directory
 current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "${current_dir}"
 
 # Load config and modules
 source out.sh
 source cron.sh
 source load-config.sh
+
+# Initialize variables
+new_source_dir=0
+current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+current_user=$(whoami)
+
+# Make sure user is root
+if [ $current_user != "root" ]; then
+    out_error "Must has root permissions to setup." 1
+    exit 1
+fi
 
 # Place the user credentials in the git URL
 git_full_url=`echo "${git_url}" | sed -r 's/(https*:\/\/)(.*)/\1'$git_username':'$git_password'@\2/'`
@@ -57,3 +68,5 @@ out_ok "Git repository pushed."
 
 # Now set up cron for pulls
 set_cron "/opt/git-code-deploy/deploy.sh"
+
+# Set up log file rolling
