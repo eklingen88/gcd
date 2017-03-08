@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Load config
+source load-config.sh
+
+echo $git_username
+exit
+
 SOURCE_DIR=/var/www/html
 TARGET_REF=origin/master
 LOG_FILE=~/log/code-deploy.log

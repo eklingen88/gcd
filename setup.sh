@@ -2,9 +2,11 @@
 
 # Initialize variables
 new_source_dir=0
+current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Load config
+# Load config and modules
 source out.sh
+source cron.sh
 source load-config.sh
 
 # Place the user credentials in the git URL
@@ -52,3 +54,6 @@ out_notice "Pushing ${git_branch} to git repository on ${git_remote} ..."
 git push "${git_remote}" "${git_branch}"
 
 out_ok "Git repository pushed."
+
+# Now set up cron for pulls
+set_cron "/opt/git-code-deploy/deploy.sh"
