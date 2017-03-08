@@ -54,6 +54,9 @@ out_ok "Git repository initialized."
 out_notice "Checking if ${git_ref} exists ..."
 
 if [[ `git ls-remote --heads ${git_remote} ${git_branch}` ]]; then
+    # Since we just create the .git directory at the beginning, we can safely remove it now
+    rm -rf "${source_dir}/.git"
+
     out_error "Ref ${git_ref} has been found in git repository." 1
 else
     out_ok "Ref ${git_ref} has not been found in the git respository."
@@ -70,3 +73,4 @@ out_ok "Git repository pushed."
 set_cron "/opt/git-code-deploy/deploy.sh"
 
 # Set up log file rolling
+# TODO
