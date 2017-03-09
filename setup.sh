@@ -20,6 +20,14 @@ if [ $current_user != "root" ]; then
     exit 1
 fi
 
+# Set up log file rotation
+if [ -d '/etc/logrotate.d' ]; then
+    cd "${current_dir}"
+    cp ./root/etc/logrotate.d/git-code-deploy /etc/logrotate.d/git-code-deploy
+else
+    out_error "Please install logrotate utility before continuing." 1
+fi
+
 # Place the user credentials in the git URL
 git_full_url=`echo "${git_url}" | sed -r 's/(https*:\/\/)(.*)/\1'$git_username':'$git_password'@\2/'`
 
@@ -68,7 +76,3 @@ out_ok "Git repository pushed."
 
 # Now set up cron for pulls
 set_cron "/opt/git-code-deploy/deploy.sh"
-
-# Set up log file rotation
-cd "${current_dir}"
-cp ./root/etc/logrotate.d/git-code-deploy /etc/logrotate.d/git-code-deploy
