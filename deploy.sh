@@ -11,4 +11,4 @@ source load-config.sh
 cd "${source_dir}"
 echo [`date`]                                       >> "${log_path}" 2>&1
 git pull "${git_remote}" "${git_branch}"            >> "${log_path}" 2>&1
-
+git clean -fd                                       >> "${log_path}" 2>&1
