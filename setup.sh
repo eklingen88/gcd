@@ -16,7 +16,7 @@ current_user=$(whoami)
 
 # Make sure user is root
 if [ $current_user != "root" ]; then
-    out_error "Must has root permissions to setup." 1
+    out_error "Must have root permissions to setup." 1
     exit 1
 fi
 
@@ -30,7 +30,7 @@ git_ref="${git_remote}/${git_branch}"
 out_notice "Checking for source files and git repository ..."
 
 if [ ! -d "${source_dir}" ]; then out_error "Source directory does not exist." 1; fi
-if [ -d "${source_dir}/.git" ]; then out_error "Git repository already initialized." 1; fi
+if [ -d "${source_dir}/.git" ]; then out_error "Git repository already initialized." && exit; fi
 
 out_ok "File structure verified."
 
@@ -54,9 +54,6 @@ out_ok "Git repository initialized."
 out_notice "Checking if ${git_ref} exists ..."
 
 if [[ `git ls-remote --heads ${git_remote} ${git_branch}` ]]; then
-    # Since we just create the .git directory at the beginning, we can safely remove it now
-    rm -rf "${source_dir}/.git"
-
     out_error "Ref ${git_ref} has been found in git repository." 1
 else
     out_ok "Ref ${git_ref} has not been found in the git respository."
@@ -72,5 +69,6 @@ out_ok "Git repository pushed."
 # Now set up cron for pulls
 set_cron "/opt/git-code-deploy/deploy.sh"
 
-# Set up log file rolling
-# TODO
+# Set up log file rotation
+cd "${current_dir}"
+cp ./root/etc/logrotate.d/git-code-deploy /etc/logrotate.d/git-code-deploy
