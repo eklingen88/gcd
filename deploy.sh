@@ -5,7 +5,7 @@ current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "${current_dir}"
 
 # Load config
-source load-config.sh
+source includes/load-config.sh
 
 # Pull everything down
 cd "${source_dir}"

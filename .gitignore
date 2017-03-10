@@ -2,8 +2,7 @@
 .idea
 
 # Ignore experiments
-/x-*
-/x/*
+x-*
 
 # General
-/git-code-deploy.conf
+git-code-deploy.conf

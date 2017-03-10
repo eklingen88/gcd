@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Define any constants off the bat
-CONFIG_PATH="git-code-deploy.conf"
+CONFIG_PATH="config/git-code-deploy.conf"
 
 # Load config
 # Turn on extended pattern matching

@@ -4,28 +4,29 @@
 current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "${current_dir}"
 
-# Load modules
-source out.sh
-source cron.sh
-
-# Check that log file exists
-if [ ! -f git-code-deploy.conf ]; then
-    # Make a copy of the sample config
-    cp git-code-deploy.sample.conf git-code-deploy.conf
-
-    out_error "Config file not found.  Please set config before proceeding."
-    echo "Press any key to continue ..."
-    read -n 1 -s
-    vi git-code-deploy.conf
-fi
-
-# Load config
-source load-config.sh
-
 # Initialize variables
 new_source_dir=0
 current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 current_user=$(whoami)
+
+# Load modules
+source includes/out.sh
+source includes/cron.sh
+source includes/url-encoding.sh
+
+# Check that log file exists
+if [ ! -f config/git-code-deploy.conf ]; then
+    # Make a copy of the sample config
+    cp config/git-code-deploy.sample.conf config/git-code-deploy.conf
+
+    out_error "Config file not found.  Please set config before proceeding."
+    echo "Press any key to continue ..."
+    read -n 1 -s
+    vi config/git-code-deploy.conf
+fi
+
+# Load config
+source includes/load-config.sh
 
 # Make sure user is root
 if [ $current_user != "root" ]; then
@@ -42,7 +43,8 @@ else
 fi
 
 # Place the user credentials in the git URL
-git_full_url=`echo "${git_url}" | sed -r 's/(https*:\/\/)(.*)/\1'$git_username':'$git_password'@\2/'`
+git_password_encoded=`urlencode $git_password`
+git_full_url=`echo "${git_url}" | sed -r 's/(https*:\/\/)(.*)/\1'$git_username':'$git_password_encoded'@\2/'`
 
 # Put git_remote and git_branch together for git_ref, eg. origin + / + remote
 git_ref="${git_remote}/${git_branch}"
