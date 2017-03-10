@@ -4,9 +4,22 @@
 current_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "${current_dir}"
 
-# Load config and modules
+# Load modules
 source out.sh
 source cron.sh
+
+# Check that log file exists
+if [ ! -f git-code-deploy.conf ]; then
+    # Make a copy of the sample config
+    cp git-code-deploy.sample.conf git-code-deploy.conf
+
+    out_error "Config file not found.  Please set config before proceeding."
+    echo "Press any key to continue ..."
+    read -n 1 -s
+    vi git-code-deploy.conf
+fi
+
+# Load config
 source load-config.sh
 
 # Initialize variables
@@ -23,7 +36,7 @@ fi
 # Set up log file rotation
 if [ -d '/etc/logrotate.d' ]; then
     cd "${current_dir}"
-    cp ./root/etc/logrotate.d/git-code-deploy /etc/logrotate.d/git-code-deploy
+    ln -s ./root/etc/logrotate.d/git-code-deploy /etc/logrotate.d/git-code-deploy
 else
     out_error "Please install logrotate utility before continuing." 1
 fi

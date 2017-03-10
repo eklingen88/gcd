@@ -20,6 +20,10 @@ do
         rhs="${rhs%\"*}"     # Del opening string quotes
         rhs="${rhs#\"*}"     # Del closing string quotes
         declare $lhs="$rhs"
+
+        if [ -z $rhs ]; then
+            out_error "Config value ${lhs} cannot be empty." 1
+        fi
     fi
 done < $CONFIG_PATH.unix
 
