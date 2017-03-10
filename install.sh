@@ -14,7 +14,12 @@ source includes/out.sh
 source includes/cron.sh
 source includes/url-encoding.sh
 
-# Check that log file exists
+# Ensure git is installed
+if ! [ -x "$(command -v git)" ]; then
+    out_error "Git is not installed." 1
+fi
+
+# Check that config file exists
 if [ ! -f config/git-code-deploy.conf ]; then
     # Make a copy of the sample config
     cp config/git-code-deploy.sample.conf config/git-code-deploy.conf
