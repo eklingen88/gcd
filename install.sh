@@ -90,4 +90,4 @@ git push "${git_remote}" "${git_branch}"
 out_ok "Git repository pushed."
 
 # Now set up cron for pulls
-set_cron "/opt/git-code-deploy/deploy.sh"
+set_cron "${current_dir}/deploy.sh"
