@@ -17,3 +17,7 @@ chmod +x -R *.sh
 - Initializes git repository and configures cron
 - Source directory must exist 
 - Source directory must not contain a git repository
+
+## Roadmap
+- Uninstall script
+- Directions for git install
